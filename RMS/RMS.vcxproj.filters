@@ -27,6 +27,9 @@
     <ClCompile Include="UIManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="RMS_Socket.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -36,6 +39,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="UIManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RMS_Socket.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

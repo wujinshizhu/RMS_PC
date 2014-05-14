@@ -8,28 +8,31 @@
 #include <opencv2\nonfree\features2d.hpp>
 #include <opencv2\legacy\legacy.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
-
+#include <stdio.h>
 
 #include <iostream>
 using namespace cv;
 using namespace std;
 
-
 #define  UM_WORK   (WM_USER+1002)
+#define  UM_ID   (WM_USER+1003)
+#define THRESHOLD 0.78
 
 class Processor
 {
 private:
 	HANDLE processorHnd;
 	DWORD processorID;
-	
+	DWORD SockThreadID;
 public:
 
 	Processor();
 	static DWORD WINAPI ProcessFrame(LPVOID lpParam);
-	static void CompareImage(IplImage *image1, IplImage *image2);
+	static float CompareImage(IplImage *image1, IplImage *image2);
 	DWORD GetProcessorId();
 	static void SavePicture(IplImage *image);
+	//将检测到的异常图片发送给socket
+	static void sendToSocket(IplImage * image,DWORD sockThreadID);
 	virtual ~Processor();
 };
 

@@ -6,7 +6,8 @@ Camera::Camera(const int cameraId)
 	CameraCapture = cvCaptureFromCAM(cameraId);
 	if (!CameraCapture)
 	{
-		MessageBox(NULL, "we can find the camera,please make sure again", "Warn", MB_OK);
+		MessageBox(NULL, "we can't find the camera,please make sure again", "Warn", MB_OK);
+		exit(-1);
 	}
 	frame = NULL;
 }

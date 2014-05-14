@@ -13,15 +13,19 @@ using namespace cv;//cv是Opencv的名字空间
 
 int main()
 {
-	//UIManager::GetInstance().ShowVideo();
 	UIManager::GetInstance().StartTimer();
-	//_beginthread(processor, 0, NULL);
-	while (cvWaitKey(100) != 's')
+	//由于框架设计上的问题，导致processor无法获得RMS_socket线程的ID，因而采用利用主线程对两者的已知性，发送RMS_socket的ID给Process
+	//从而processor 可以与RMS_socket进行通信
+	UIManager::GetInstance().sendSocketIdToProcessor();
+	//UIManager::GetInstance().StartSocketService();
+	UIManager::GetInstance().ShowVideo();
+	//system("pause");
+	/*
+	while(cvWaitKey(100) != 's')
 	{
 		cvWaitKey(100);
 	}
-	//_endthread();
-
+	*/
 	return 0;
 	//程序结束
 	

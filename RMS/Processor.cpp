@@ -2,6 +2,7 @@
 #include <opencv2\features2d\features2d.hpp>
 
 
+
 Processor::Processor()
 {
 	processorHnd = CreateThread(NULL, 0, ProcessFrame, NULL, 0, &processorID);
@@ -10,11 +11,9 @@ Processor::Processor()
 DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 {
 	MSG msg;
-	IplImage * frame_last=NULL;
-	IplImage * frame_now=NULL;
-
-
-	cvNamedWindow("last");
+	IplImage * frame_last = NULL;
+	IplImage * frame_now = NULL;
+	DWORD SockThreadID = NULL;
 	while (1)
 	{
 		while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
@@ -33,12 +32,11 @@ DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 						frame->nChannels);
 					cvCopy(frame, tempImg, NULL);
 					frame_now = tempImg;
-					//CompareImage(frame_last, frame_now);
-					//cvShowImage("last", frame_last);
-					//cvShowImage("camera", frame_now);
-					//getORB(frame_last, frame_now);
-					CompareImage(frame_last, frame_now);
-					SavePicture(frame_now);
+					if (CompareImage(frame_last, frame_now) < THRESHOLD)
+					{
+						sendToSocket(frame_now, SockThreadID);
+					}
+					//SavePicture(frame_now);
 				}
 				else
 				{
@@ -53,13 +51,18 @@ DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 				t = t * 1000 / getTickFrequency();
 				printf("%f ms\n", t);
 			}
-			Sleep(500);
+			else if (msg.message == UM_ID)
+			{
+				SockThreadID = msg.wParam;
+			}
 		}
+		Sleep(500);
 	}
 
 	return 0;
 }
-void Processor::CompareImage(IplImage *image1, IplImage *image2)
+//进行图像比较，并返回最小相似度
+float Processor::CompareImage(IplImage *image1, IplImage *image2)
 {
 	Mat i1(image1);
 	Mat i2(image2);
@@ -94,9 +97,28 @@ void Processor::CompareImage(IplImage *image1, IplImage *image2)
 	Mat ssim_map;
 	divide(t3, t1, ssim_map);
 	Scalar mssim = mean(ssim_map);
+	printf("图像相似度：\n");
 	printf("%f\n", mssim.val[0] * 100);
 	printf("%f\n", mssim.val[1] * 100);
 	printf("%f\n", mssim.val[2] * 100);
+	//返回三者的最小值用作阈值判断
+	float min;
+	if (mssim.val[0] > mssim.val[1])
+	{
+		min = mssim.val[1];
+	}
+	else
+	{
+		min = mssim.val[0];
+	}
+	if (min > mssim.val[2])
+	{
+		return mssim.val[2];
+	}
+	else
+	{
+		return min;
+	}
 }
 
 void Processor::SavePicture(IplImage *image)
@@ -111,11 +133,15 @@ void Processor::SavePicture(IplImage *image)
 	cvSaveImage(path, image);
 }
 
+void Processor::sendToSocket(IplImage * image,DWORD sockThreadID)
+{
+	PostThreadMessage(sockThreadID, UM_WORK,(WPARAM)image, NULL);
+}
+
 DWORD Processor::GetProcessorId()
 {
 	return processorID;
 }
-
 
 Processor::~Processor()
 {

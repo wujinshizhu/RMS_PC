@@ -5,11 +5,12 @@ UIManager::UIManager()
 	camera = new Camera();
 	windowName = WNDNAME;
 	processor = new Processor();
-	cvNamedWindow(windowName); //define the window name
+	socket = new RMS_Socket();
 }
 
 void UIManager::ShowVideo(const int timeInterval)
 {
+	cvNamedWindow(windowName); //define the window name
 	while (1)
 	{
 		cvShowImage(windowName, camera->QueryFream());
@@ -20,14 +21,23 @@ void UIManager::ShowVideo(const int timeInterval)
 			break;
 		}
 	}
+	cvDestroyWindow(windowName);
 }
 //used to send image to the camera processor
 VOID   CALLBACK  UIManager::TimerProc(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime)
 {
 	IplImage* frame=UIManager::GetInstance().camera->QueryFream();
 	//post Message to processor
-	PostThreadMessage(UIManager::GetInstance().processor->GetProcessorId(), UM_WORK, (WPARAM)frame, NULL);
-
+	if (frame != NULL)
+	{
+		PostThreadMessage(UIManager::GetInstance().processor->GetProcessorId(), UM_WORK, (WPARAM)frame, NULL);
+	}
+}
+void UIManager::sendSocketIdToProcessor()
+{
+	//send the threadID of socket to processor to communication
+	PostThreadMessage(UIManager::GetInstance().processor->GetProcessorId(), UM_ID,
+		(WPARAM)UIManager::GetInstance().socket->GetThreadID(), NULL);
 }
 
 void UIManager::StartTimer()
@@ -35,15 +45,24 @@ void UIManager::StartTimer()
 	SetTimer(NULL, 1, 1000, TimerProc);
 }
 
+
 UIManager::~UIManager()
 {
 	KillTimer(NULL, 1);
-
-	cvDestroyWindow(windowName);
 	delete camera;
 	if (camera != NULL)
 	{
 		camera = NULL;
+	}
+	delete processor;
+	if (processor != NULL)
+	{
+		processor = NULL;
+	}
+	delete socket;
+	if (socket != NULL)
+	{
+		socket = NULL;
 	}
 }
 
