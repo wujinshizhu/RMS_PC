@@ -85,7 +85,6 @@ DWORD WINAPI RMS_Socket::CommManager(LPVOID lpParam)
 		SOCKET sockConn = accept(mSocket, (SOCKADDR*)&addrClient, &len);
 		printf("检测到socket连接");
 		PrcessMessage(sockConn);
-		
 		//检测到连接之后发送文件
 		/*
 		char sendBuf[50];
@@ -115,15 +114,16 @@ void RMS_Socket::PrcessMessage(SOCKET sockConn)
 		{
 			if (msg.message == UM_WORK)
 			{
-				/*
+				
 				IplImage* frame = (IplImage*)msg.wParam;
 				IplImage* tempImg = cvCreateImage(cvGetSize(frame),
 					frame->depth,
 					frame->nChannels);
 				cvCopy(frame, tempImg, NULL);
 				int size = tempImg->imageSize;
+				size = EndianConvertLToB(size);
 				char * sendBuf = (char*)&size;
-				*/
+				send(sockConn, sendBuf, sizeof(sendBuf), 0);
 				/*
 				char * sendBuf = new char[size + 10];
 
@@ -135,17 +135,19 @@ void RMS_Socket::PrcessMessage(SOCKET sockConn)
 				sprintf(sendBuf, "%s", &size);
 				//sprintf(sendBuf, "%d", 100);
 				*/
-				int sendsize = send(sockConn, "fuck", sizeof("fuck")-1, 0);
 				//int sendsize2 = send(sockConn, "a", sizeof("a"), 0);
 				//int sendsize3= send(sockConn, "a", sizeof("a"), 0);
-				sendsize++;
-				sendsize--;
 			}
 		}
 		Sleep(500);
 	}
 }
 
+int RMS_Socket::EndianConvertLToB(int InputNum) {
+	CHAR *p = (CHAR*)&InputNum;
+	return(((INT)*p << 24) + ((INT)*(p + 1) << 16) +
+		((INT)*(p + 2) << 8) + (INT)*(p + 3));
+}
 RMS_Socket::~RMS_Socket()
 {
 	WSACleanup();

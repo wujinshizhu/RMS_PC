@@ -35,5 +35,7 @@ public:
 	DWORD GetThreadID();
 	//处理本地的消息队列，主要是processor发来的消息
 	static void PrcessMessage(SOCKET sockConn);
+	//用于本地的小端Int数据转换为大端int
+	static int EndianConvertLToB(int);
 };
 
