@@ -17,6 +17,7 @@ using namespace std;
 #define  UM_WORK   (WM_USER+1002)
 #define  UM_ID   (WM_USER+1003)
 #define THRESHOLD 0.78
+#define PATH "D:\\RMS\\"
 
 class Processor
 {

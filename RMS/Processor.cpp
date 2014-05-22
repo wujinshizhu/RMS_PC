@@ -49,7 +49,7 @@ DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 				}
 				t = getTickCount() - t;
 				t = t * 1000 / getTickFrequency();
-				printf("%f ms\n", t);
+				//printf("%f ms\n", t);
 			}
 			else if (msg.message == UM_ID)
 			{
@@ -97,10 +97,12 @@ float Processor::CompareImage(IplImage *image1, IplImage *image2)
 	Mat ssim_map;
 	divide(t3, t1, ssim_map);
 	Scalar mssim = mean(ssim_map);
+	/*
 	printf("图像相似度：\n");
 	printf("%f\n", mssim.val[0] * 100);
 	printf("%f\n", mssim.val[1] * 100);
 	printf("%f\n", mssim.val[2] * 100);
+	*/
 	//返回三者的最小值用作阈值判断
 	float min;
 	if (mssim.val[0] > mssim.val[1])
@@ -123,11 +125,10 @@ float Processor::CompareImage(IplImage *image1, IplImage *image2)
 
 void Processor::SavePicture(IplImage *image)
 {
-	char * filepath = "D:\\RMS\\RMS_";
 	static int pictureID = 0;
 	char* pictureID_str = new char[100];
 	stringstream stream;
-	stream <<filepath<<pictureID++<<".jpg";
+	stream <<PATH<<"RMS_"<<pictureID++<<".jpg";
 	stream >>pictureID_str;
 	char * path = (LPSTR)pictureID_str;
 	cvSaveImage(path, image);
