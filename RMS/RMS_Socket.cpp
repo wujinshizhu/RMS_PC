@@ -197,6 +197,7 @@ void RMS_Socket::ReceviceRequest(SOCKET sockConn,int &timerId)
 		case control:
 			break;
 		case disconnect:
+			isConnectted = false;
 			break;
 		default:
 			break;

@@ -19,13 +19,6 @@ int main()
 	UIManager::GetInstance().sendSocketIdToProcessor();
 	//UIManager::GetInstance().StartSocketService();
 	UIManager::GetInstance().ShowVideo();
-	//system("pause");
-	/*
-	while(cvWaitKey(100) != 's')
-	{
-		cvWaitKey(100);
-	}
-	*/
 	return 0;
 	//³ÌÐò½áÊø
 	

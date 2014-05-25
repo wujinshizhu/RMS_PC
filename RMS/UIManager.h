@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "Processor.h"
 #include "RMS_Socket.h"
-
+#include "Config.h"
 #define  WNDNAME "camera"
 
 //used to manager the way we show the data
@@ -16,6 +16,7 @@ private:
 	const char * windowName;
 	Processor * processor;
 	RMS_Socket * socket;
+	Config * config;
 	UIManager();
 	//used to ban the copy constructor to ensure singleton
 	UIManager(const UIManager&);

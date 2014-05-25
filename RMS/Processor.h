@@ -25,9 +25,11 @@ private:
 	HANDLE processorHnd;
 	DWORD processorID;
 	DWORD SockThreadID;
+	//用于判断是否发生变动
+	static int threshold;
 public:
 
-	Processor();
+	Processor(int threshold);
 	static DWORD WINAPI ProcessFrame(LPVOID lpParam);
 	static float CompareImage(IplImage *image1, IplImage *image2);
 	DWORD GetProcessorId();

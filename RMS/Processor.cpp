@@ -3,10 +3,13 @@
 
 
 
-Processor::Processor()
+Processor::Processor(int threshold)
 {
+	this->threshold = threshold;
 	processorHnd = CreateThread(NULL, 0, ProcessFrame, NULL, 0, &processorID);
 }
+
+int Processor::threshold = 75;
 //get the Similarity of the successive frame
 DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 {
@@ -20,7 +23,7 @@ DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 		{
 			if (msg.message == UM_WORK)
 			{
-				double t = getTickCount();
+				//double t = getTickCount();
 				IplImage* frame = (IplImage*)msg.wParam;
 				if (frame_now != NULL)
 				{
@@ -32,7 +35,7 @@ DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 						frame->nChannels);
 					cvCopy(frame, tempImg, NULL);
 					frame_now = tempImg;
-					if (CompareImage(frame_last, frame_now) < THRESHOLD)
+					if (CompareImage(frame_last, frame_now) < threshold)
 					{
 						sendToSocket(frame_now, SockThreadID);
 					}
@@ -47,8 +50,8 @@ DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 					cvCopy(frame, tempImg, NULL);
 					frame_now = tempImg;
 				}
-				t = getTickCount() - t;
-				t = t * 1000 / getTickFrequency();
+				//t = getTickCount() - t;
+				//t = t * 1000 / getTickFrequency();
 				//printf("%f ms\n", t);
 			}
 			else if (msg.message == UM_ID)
@@ -115,11 +118,13 @@ float Processor::CompareImage(IplImage *image1, IplImage *image2)
 	}
 	if (min > mssim.val[2])
 	{
-		return mssim.val[2];
+		printf("图像相似度：%f\n",mssim.val[2]);
+		return mssim.val[2]*100;
 	}
 	else
 	{
-		return min;
+		printf("图像相似度：%f\n", min);
+		return min*100;
 	}
 }
 

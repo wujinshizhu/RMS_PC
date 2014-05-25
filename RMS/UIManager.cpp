@@ -4,7 +4,8 @@ UIManager::UIManager()
 {
 	camera = new Camera();
 	windowName = WNDNAME;
-	processor = new Processor();
+	config = new Config();
+	processor = new Processor(config->GetThreshold());
 	socket = new RMS_Socket();
 }
 
@@ -42,7 +43,7 @@ void UIManager::sendSocketIdToProcessor()
 
 void UIManager::StartTimer()
 {
-	SetTimer(NULL, 1, 1000, TimerProc);
+	SetTimer(NULL, 1, config->GetSampleInterval() * 1000, TimerProc);
 }
 
 
@@ -63,6 +64,11 @@ UIManager::~UIManager()
 	if (socket != NULL)
 	{
 		socket = NULL;
+	}
+	delete config;
+	if (config != NULL)
+	{
+		config = NULL;
 	}
 }
 

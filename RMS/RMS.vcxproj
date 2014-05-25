@@ -71,6 +71,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Config.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Processor.cpp" />
     <ClCompile Include="RMS_Socket.cpp" />
@@ -78,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="Processor.h" />
     <ClInclude Include="RMS_Socket.h" />
     <ClInclude Include="UIManager.h" />
