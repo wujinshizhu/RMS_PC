@@ -28,6 +28,8 @@ public:
 	void SetThreshold(int threshold);
 	int GetRecoverTime();
 	void SetRecoverTime(int recoverTime);
+	//保存当前设置到配置文件
+	void Save();
 	virtual ~Config();
 };
 

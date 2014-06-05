@@ -72,6 +72,20 @@ void Config::SetRecoverTime(int recoverTime)
 {
 	this->recoverTime = recoverTime;
 }
+
+void Config::Save()
+{
+	fout.open(filename);
+	if (!fout)
+	{
+		cout << "配置文件保存出错" << endl;
+	}
+	else
+	{
+		fout << sampleInterval << " " << threshold << " " << recoverTime;
+		fout.close();
+	}
+}
 Config::~Config()
 {
 

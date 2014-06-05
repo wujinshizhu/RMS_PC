@@ -7,8 +7,9 @@ Processor::Processor(int threshold)
 {
 	this->threshold = threshold;
 	processorHnd = CreateThread(NULL, 0, ProcessFrame, NULL, 0, &processorID);
+	SockThreadID = RMS_Socket::GetThreadID();
 }
-
+DWORD Processor::SockThreadID = 0;
 int Processor::threshold = 75;
 //get the Similarity of the successive frame
 DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
@@ -16,7 +17,6 @@ DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 	MSG msg;
 	IplImage * frame_last = NULL;
 	IplImage * frame_now = NULL;
-	DWORD SockThreadID = NULL;
 	while (1)
 	{
 		while (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
@@ -53,10 +53,6 @@ DWORD WINAPI Processor::ProcessFrame(LPVOID lpParam)
 				//t = getTickCount() - t;
 				//t = t * 1000 / getTickFrequency();
 				//printf("%f ms\n", t);
-			}
-			else if (msg.message == UM_ID)
-			{
-				SockThreadID = msg.wParam;
 			}
 		}
 		Sleep(500);
@@ -128,6 +124,7 @@ float Processor::CompareImage(IplImage *image1, IplImage *image2)
 	}
 }
 
+
 void Processor::SavePicture(IplImage *image)
 {
 	static int pictureID = 0;
@@ -139,11 +136,16 @@ void Processor::SavePicture(IplImage *image)
 	cvSaveImage(path, image);
 }
 
-void Processor::sendToSocket(IplImage * image,DWORD sockThreadID)
+void Processor::sendToSocket(IplImage * image,DWORD SockThreadID)
 {
-	PostThreadMessage(sockThreadID, UM_WORK,(WPARAM)image, NULL);
+	PostThreadMessage(SockThreadID, UM_WORK,(WPARAM)image, NULL);
 }
 
+void Processor::SetThreshold(int threshold_new)
+{
+	threshold = threshold_new;
+	cout << "阈值变更为" << threshold_new << endl;
+}
 DWORD Processor::GetProcessorId()
 {
 	return processorID;

@@ -17,6 +17,7 @@ private:
 	Processor * processor;
 	RMS_Socket * socket;
 	Config * config;
+	DWORD timerId;
 	UIManager();
 	//used to ban the copy constructor to ensure singleton
 	UIManager(const UIManager&);
@@ -25,14 +26,17 @@ private:
 public:
 
 	//show the video we get from the camera
-	void ShowVideo(const int timeInterval = 33);
+	void ShowVideo(const int timeInterval = 30);
     void StartTimer();
+	void ResetTimer();
 	virtual ~UIManager();
 	//used to send image to the camera processor
 	static VOID   CALLBACK  TimerProc(HWND   hwnd, UINT   uMsg, UINT   idEvent, DWORD   dwTime);
 	void sendSocketIdToProcessor();
 	//static UIManager* GetInstance();
 	static UIManager & GetInstance();
+	//处理消息
+	void ProcessMessage();
 	
 };
 
